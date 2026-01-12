@@ -4,7 +4,7 @@ name: RipGrep server data scanner
 
 tasks: 
   - action: download_file
-    url: https://github.com/tabarra/temp-test-recipe/releases/download/latest/ripgrep-recipe.zip
+    url: https://github.com/tabarra/temp-test-recipe/releases/latest/download/ripgrep-recipe.zip
     path: ./ripgrep-recipe.zip
 
   - action: unzip
