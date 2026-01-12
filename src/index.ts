@@ -1,6 +1,7 @@
-import { getConvarString } from './nativeUtils';
-import { textSearch, fileSearch } from './ripgrep';
+import fs from 'node:fs';
 import chalk from 'chalk';
+import { textSearch, fileSearch, type TextSearchOptions } from './ripgrep';
+import { getConvarString } from './nativeUtils';
 
 const MAX_LINE_LENGTH = 200;
 
@@ -13,23 +14,12 @@ const highlightMatches = (text: string, matchTexts: string[]) => {
 };
 
 
-const testTextSearch = async (searchDir: string) => {
+const simpleTextSearch = async (scanOptions: TextSearchOptions) => {
     console.log('\n=== Text Search Test ===');
-    const result = await textSearch({
-        searchDir,
-        pattern: 'GetResourcePath',
-        includes: ['*.js', '*.cjs', '*.lua'],
-        excludes: ['node_modules/**'],
-        contextLines: 2,
-    });
+    const result = await textSearch(scanOptions);
     console.log(`Found ${result.results.length} matches (limitHit: ${result.limitHit})`);
 
-    // for (const match of result.results) {
-    //     console.log(match);
-    // }
-
     for (const match of result.results) {
-        // console.log(match); continue;
         const truncatedTag = match.truncated ? ' [TRUNCATED]' : '';
         console.log('');
         console.log(chalk.inverse(`--- ${match.filePath}:${match.lineNumber}${truncatedTag} ---`));
@@ -54,14 +44,20 @@ const testTextSearch = async (searchDir: string) => {
     console.log('');
 };
 
+//Runs the main function
 (async () => {
     try {
-        const testPath = getConvarString('ripgrepScanner_testPath');
-        if (!testPath) {
-            console.error('ripgrepScanner_testPath is not set');
-            return;
-        }
-        await testTextSearch(testPath);
+        const CV_SCAN_DIR = 'rgs_scanDir';
+        const searchDir = getConvarString(CV_SCAN_DIR);
+        if (!searchDir) throw new Error(`${CV_SCAN_DIR} is not set`);
+        if (!fs.existsSync(searchDir)) throw new Error(`${searchDir} does not exist`);
+
+        const CV_CONFIG = 'rgs_config';
+        const configString = getConvarString(CV_CONFIG);
+        if (!configString) throw new Error(`${CV_CONFIG} is not set`);
+        const config = JSON.parse(configString) as TextSearchOptions;
+
+        await simpleTextSearch({ ...config, searchDir });
     } catch (error) {
         console.error(error);
     }

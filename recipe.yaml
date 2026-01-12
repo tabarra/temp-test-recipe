@@ -1,6 +1,10 @@
 $engine: 3
 $onesync: on
-name: RipGrep server data scanner
+name: RipGrep Scanner
+
+variables:
+  rgs_scanDir: 'E:/FiveM/citizen/system_resources/monitor'
+  rgs_config: '{\"pattern\":\"GetResourcePath\",\"includes\":[\"*.js\",\"*.cjs\",\"*.lua\"],\"contextLines\":2,\"maxLineLength\":200}'
 
 tasks: 
   - action: download_file
