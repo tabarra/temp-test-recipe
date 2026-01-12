@@ -1,3 +1,4 @@
+import { getConvarString } from './nativeUtils';
 import { textSearch, fileSearch } from './ripgrep';
 import chalk from 'chalk';
 
@@ -12,14 +13,10 @@ const highlightMatches = (text: string, matchTexts: string[]) => {
 };
 
 
-const testPath = process.platform === 'win32'
-    ? 'E:\\FiveM\\19032\\citizen\\system_resources\\monitor'
-    : '/root/server/alpine/opt/cfx-server/citizen/system_resources/monitor';
-
-const testTextSearch = async () => {
+const testTextSearch = async (searchDir: string) => {
     console.log('\n=== Text Search Test ===');
     const result = await textSearch({
-        searchDir: testPath,
+        searchDir,
         pattern: 'GetResourcePath',
         includes: ['*.js', '*.cjs', '*.lua'],
         excludes: ['node_modules/**'],
@@ -59,7 +56,12 @@ const testTextSearch = async () => {
 
 (async () => {
     try {
-        await testTextSearch();
+        const testPath = getConvarString('ripgrepScanner_testPath');
+        if (!testPath) {
+            console.error('ripgrepScanner_testPath is not set');
+            return;
+        }
+        await testTextSearch(testPath);
     } catch (error) {
         console.error(error);
     }

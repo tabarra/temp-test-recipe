@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getCurrentDir } from '../runtimeDir';
+import { getCurrentDir } from '../nativeUtils';
 import type { RgBytesOrText } from './types';
 
 // FiveM-specific globals (to detect runtime)

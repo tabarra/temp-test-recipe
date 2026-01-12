@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { getCurrentDir } from './runtimeDir';
+import { getCurrentDir } from './nativeUtils';
 
 type PathJoiner = {
     /**
